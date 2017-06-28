@@ -102,3 +102,8 @@ foreach ($urlMaps as $fileUrl => $downloadUrl) {
     // TODO
 }
 ```
+
+
+
+
+复制的chocoboxxf的项目，增加了一个fetch的远程地址的上传方法。
