@@ -93,6 +93,50 @@ class Qiniu extends Component
             ],
         ];
     }
+    
+    /**
+     * 通过fetch方式去上传
+     * @param $url        指定的URL
+     * @param $bucket     目标资源空间
+     * @param $key        目标资源文件名
+     */
+    public function putRemoteFile($url,$bucket, $fileName)
+    {
+        if (!isset($this->managers['bucket'])) {
+            $this->managers['bucket'] = new BucketManager($this->auth);
+        }
+        $uploadToken = $this->auth->uploadToken($this->bucket);
+        
+        list($ret, $err) = $this->managers['bucket']->fetch($url, $bucket, $fileName);
+
+        // 正常情况
+        if (is_null($err)) {
+            return [
+                'code' => self::CODE_SUCCESS,
+                'message' => self::MESSAGE_SUCCESS,
+                'result' => [
+                    'hash' => $ret['hash'],
+                    'key' => $ret['key'],
+                    'url' => sprintf('%s%s/%s',
+                        $this->secure ? 'https://' : 'http://',
+                        rtrim($this->domain, '/'),
+                        $fileName
+                    ),
+                ],
+            ];
+        }
+        // 错误情况
+        return [
+            'code' => $err->code(),
+            'message' => $err->message(),
+            'result' => [
+                'hash' => '',
+                'key' => '',
+                'url' => '',
+            ],
+        ];
+    }    
+    
 
     /**
      * 使用文件路径上传
