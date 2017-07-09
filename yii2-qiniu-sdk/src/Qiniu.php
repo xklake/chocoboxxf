@@ -222,6 +222,11 @@ class Qiniu extends Component
     public function deleteFile($fileName){
         $buckManager = new BucketManager($this->auth);
         if($buckManager){
+            $pos = -1;
+            if(($pos = strrpos($fileName, '/')) != -1){
+               $fileName = substr($fileName, $pos + 1);
+            }
+           
             return $buckManager->delete($this->bucket, $fileName);
         }
     }
